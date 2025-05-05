@@ -5,7 +5,13 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --require tsconfig-paths/register --env-file .env src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:restart": "docker compose restart",
+    "docker:ps": "docker compose ps",
+    "docker:db:cli": "docker exec -it postgres_db psql -U ciclozero -d ciclozero_db"
   },
   "keywords": [],
   "author": "",
