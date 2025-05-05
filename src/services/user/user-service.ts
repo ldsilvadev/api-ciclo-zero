@@ -56,4 +56,13 @@ export default class UserService {
       success: true,
     };
   }
+
+  async getUsers() {
+    const users = await prisma.user.findMany();
+
+    return {
+      data: users,
+      success: true,
+    };
+  }
 }
