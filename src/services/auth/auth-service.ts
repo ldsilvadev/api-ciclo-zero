@@ -8,7 +8,7 @@ import { errorMessage } from "@/utils";
 import { env } from "@/env";
 
 export default class AuthService {
-  async auth(userData: AuthParams): Promise<ServiceResponse<string>> {
+  async auth(userData: AuthParams): Promise<ServiceResponse<{ token: string }>> {
     const loginSchema = z.object({
       email: z.string().email(),
       password: z.string(),
@@ -48,7 +48,9 @@ export default class AuthService {
     });
 
     return {
-      data: token,
+      data: {
+        token
+      },
       success: true,
     };
   }
