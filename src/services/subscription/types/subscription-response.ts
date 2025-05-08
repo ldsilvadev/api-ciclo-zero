@@ -1,4 +1,4 @@
-export default interface GetByUserIdResponse {
+export default interface SubscriptionResponse {
     user_id: string 
     name: string 
     price: number 

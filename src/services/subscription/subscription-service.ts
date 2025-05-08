@@ -2,7 +2,7 @@ import { ServiceResponse } from "@/types";
 import { z } from "zod";
 import { prisma } from "../../configs/prisma";
 import { randomUUID } from "crypto";
-import { GetByUserIdResponse, UpdateSubscriptionParams, UpdateSubscriptionResponse } from "./types";
+import { SubscriptionResponse, UpdateSubscriptionParams, UpdateSubscriptionResponse } from "./types";
 import { SubscriptionNotFoundError } from "@/errors";
 import { CreateSubscription } from "./types";
 
@@ -42,7 +42,8 @@ export default class SubscriptionService {
       success: true,
     };
   }
-  async GetByUserId(user_id: string): Promise<ServiceResponse<GetByUserIdResponse[]>> {
+  
+  async GetByUserId(user_id: string): Promise<ServiceResponse<SubscriptionResponse[]>> {
     try {
       const subscriptions = await prisma.subscription.findMany({
         where: {
@@ -58,6 +59,27 @@ export default class SubscriptionService {
       throw new SubscriptionNotFoundError();
     }
   }
+
+  async getById(id: string): Promise<ServiceResponse<SubscriptionResponse | null>> {
+    try {
+      const subscription = await prisma.subscription.findUnique({
+        where: {
+          id
+        }
+      })
+
+      return {
+        data: subscription,
+        success: true,
+      }
+
+    }catch {
+      throw new SubscriptionNotFoundError();
+    }
+
+    
+  }
+
   async updateSubscription(
     id: string,
     subscription: UpdateSubscriptionParams
@@ -97,6 +119,7 @@ export default class SubscriptionService {
       success: true,
     };
   }
+
   async deleteSubscription(id: string): Promise<ServiceResponse<string>> {
     const idSchema = z.string().uuid();
 

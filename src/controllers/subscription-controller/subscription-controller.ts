@@ -1,6 +1,6 @@
 import { SubscriptionService } from "@/services";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateSubscription, GetByUserId, DeleteSubscription } from "./types";
+import { CreateSubscription, GetByUserParams, DeleteSubscription, GetByIdParams } from "./types";
 import {
   UpdateSubscriptionParams,
   UpdateSubscriptionResponse,
@@ -25,7 +25,7 @@ export default class SubscriptionController {
   }
 
   async getByUserId(
-    request: FastifyRequest<{ Params: GetByUserId }>,
+    request: FastifyRequest<{ Params: GetByUserParams }>,
     reply: FastifyReply
   ) {
     const { user_id } = request.params;
@@ -33,6 +33,18 @@ export default class SubscriptionController {
     const response = await subscriptionService.GetByUserId(user_id);
 
     if (!response.success) {
+      return reply.status(400).send({ errors: response.error.issues });
+    }
+
+    return reply.status(201).send(response);
+  }
+
+  async getById(request: FastifyRequest<{Params: GetByIdParams}>, reply: FastifyReply) {
+    const { id } = request.params;
+
+    const response = await subscriptionService.getById(id);
+
+    if(!response.success) {
       return reply.status(400).send({ errors: response.error.issues });
     }
 

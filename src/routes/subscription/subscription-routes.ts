@@ -6,6 +6,7 @@ const subscriptionController = new SubscriptionController();
 export default async function SubscriptionRoutes(server: FastifyInstance) {
   server.post("/subscriptions", subscriptionController.createSubscription);
   server.get("/subscriptions/:user_id", subscriptionController.getByUserId);
+  server.get("/subscription/:id", subscriptionController.getById);
   server.put("/subscriptions/:id", subscriptionController.updateSubscription);
   server.delete("/subscriptions/:id", subscriptionController.delete);
 }
