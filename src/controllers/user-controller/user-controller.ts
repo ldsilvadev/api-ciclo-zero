@@ -18,6 +18,11 @@ export default class UserController {
     }
 
     return reply.status(201).send(response);
+  }
 
+  async getUsers(request: FastifyRequest, reply: FastifyReply) {
+    const response = await userService.getUsers();
+
+    return reply.status(201).send(response);
   }
 }

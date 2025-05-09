@@ -9,7 +9,7 @@ server.register(cors, {
   origin: "*",
 });
 
-server.register(routes)
+server.register(routes);
 
 server.listen({ port: env.PORT }, (err, address) => {
   if (err) {

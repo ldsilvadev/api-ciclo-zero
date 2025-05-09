@@ -13,9 +13,7 @@ export default class UserService {
       id: z.string().uuid(),
       name: z.string(),
       email: z.string(),
-      password_hash: z.string(),
-      // plan: z.enum(["free", "premium"]),
-      // created_at: z.date(),
+      password: z.string(),
     });
 
     const { error, data } = createUserSchema.safeParse({
@@ -40,10 +38,12 @@ export default class UserService {
       return errorMessage("Usuário ja cadastrado");
     }
 
-    const hashedPassword = await bcrypt.hash(user.password_hash, salt);
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+
+    const { password, ...userInfos } = data;
 
     const payload = {
-      ...data,
+      ...userInfos,
       password_hash: hashedPassword,
     };
 
@@ -53,6 +53,15 @@ export default class UserService {
 
     return {
       data: "Usuário criado com sucesso",
+      success: true,
+    };
+  }
+
+  async getUsers() {
+    const users = await prisma.user.findMany();
+
+    return {
+      data: users,
       success: true,
     };
   }
