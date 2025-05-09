@@ -2,11 +2,16 @@ import { fastify } from "fastify";
 import { env } from "@/env";
 import cors from "@fastify/cors";
 import { routes } from "./routes";
+import fastifyJwt from "@fastify/jwt";
 
 const server = fastify();
 
 server.register(cors, {
   origin: "*",
+});
+
+server.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
 });
 
 server.register(routes);
