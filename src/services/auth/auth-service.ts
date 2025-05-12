@@ -11,6 +11,7 @@ import { addHours } from "date-fns";
 import bcrypt from "bcrypt";
 import { salt } from "@/configs/salt";
 import transporter from "../../configs/nodemailer";
+import { sendEmail } from "./utils";
 
 export default class AuthService {
   async auth(userData: AuthParams): Promise<ServiceResponse<{ token: string }>> {
@@ -81,6 +82,8 @@ export default class AuthService {
         expires_at
       }      
     })
+
+    sendEmail(email, token);
 
     return {
       data: "Enviado e-mail de redefinição de senha",
