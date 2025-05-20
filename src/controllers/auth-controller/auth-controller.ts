@@ -13,7 +13,7 @@ export default class AuthController {
 
     const response = await authService.auth(userData);
 
-    if(!response.success) {
+    if (!response.success) {
       return reply.status(400).send(response);
     }
 
