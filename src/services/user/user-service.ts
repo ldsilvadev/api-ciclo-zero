@@ -40,7 +40,7 @@ export default class UserService {
 
     const hashedPassword = await bcrypt.hash(user.password, salt);
 
-    const { password, ...userInfos } = data;
+    const { password: _, ...userInfos } = data;
 
     const payload = {
       ...userInfos,

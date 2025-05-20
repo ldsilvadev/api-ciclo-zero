@@ -7,7 +7,7 @@ const userService = new UserService();
 export default class UserController {
   async createUser(
     request: FastifyRequest<{ Body: CreateUser }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const user = request.body;
 
