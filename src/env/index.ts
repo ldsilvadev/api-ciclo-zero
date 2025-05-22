@@ -13,6 +13,8 @@ const envSchema = z.object({
   DATABASE_CLIENT: z.enum(["pg", "sqlite"]).default("pg"),
   DATABASE_URL: z.string(),
   JWT_SECRET: z.string(),
+  EMAIL_USER: z.string(),
+  EMAIL_PASS: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);
