@@ -3,7 +3,8 @@ export default interface CreateSubscription {
     name: string
     price: string
     billing_cycle: "monthly" | "yearly"
-    next_renewal_date: Date
+    due_date: Date
+    installment: number
     auto_detected: boolean
     created_at: Date
 }

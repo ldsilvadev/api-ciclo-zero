@@ -23,23 +23,23 @@ enum BillingCycle {
 }
 
 model User {
-  id            String         @id @default(uuid())
+  id            String               @id @default(uuid())
   name          String
-  email         String         @unique
+  email         String               @unique
   password_hash String
-  plan          Plan           @default(free)
-  created_at     DateTime       @default(now())
-  subscriptions  Subscription[]
-  resetTokens PasswordResetToken[]
+  plan          Plan                 @default(free)
+  created_at    DateTime             @default(now())
+  subscriptions Subscription[]
+  resetTokens   PasswordResetToken[]
 
   @@map("users")
 }
 
 model PasswordResetToken {
-  id String @id @default(uuid())
-  token String @unique
-  user_id String
-  user User @relation(fields: [user_id], references: [id])
+  id         String   @id @default(uuid())
+  token      String   @unique
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
   expires_at DateTime
   created_at DateTime @default(now())
 
@@ -47,15 +47,16 @@ model PasswordResetToken {
 }
 
 model Subscription {
-  id                String       @id @default(uuid())
-  user_id           String
-  user              User         @relation(fields: [user_id], references: [id])
-  name              String
-  price             Float
-  billing_cycle     BillingCycle
-  next_renewal_date DateTime
-  auto_detected     Boolean      @default(false)
-  created_at         DateTime     @default(now())
+  id            String       @id @default(uuid())
+  user_id       String
+  user          User         @relation(fields: [user_id], references: [id])
+  name          String
+  price         Float
+  billing_cycle BillingCycle
+  due_date      DateTime
+  installment   Int?
+  auto_detected Boolean      @default(false)
+  created_at    DateTime     @default(now())
 
   @@map("subscriptions")
 }

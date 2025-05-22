@@ -4,6 +4,7 @@ export default interface UpdateSubscriptionResponse {
   name: string;
   price: number;
   billing_cycle: "monthly" | "yearly";
-  next_renewal_date: Date;
+  due_date: Date;
+  installment: number | null;
   auto_detected: boolean;
 }
