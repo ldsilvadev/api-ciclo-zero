@@ -2,13 +2,18 @@ import { ServiceResponse } from "@/types";
 import { z } from "zod";
 import { prisma } from "../../configs/prisma";
 import { randomUUID } from "crypto";
-import { SubscriptionResponse, UpdateSubscriptionParams, UpdateSubscriptionResponse } from "./types";
+import {
+  SubscriptionResponse,
+  UpdateSubscriptionParams,
+  UpdateSubscriptionResponse,
+} from "./types";
 import { SubscriptionNotFoundError } from "@/errors";
 import { CreateSubscription } from "./types";
+import GetNextDueResponse from "./types/get-next-due-response";
 
 export default class SubscriptionService {
   async createSubscription(
-    subscription: CreateSubscription
+    subscription: CreateSubscription,
   ): Promise<ServiceResponse<string>> {
     const createSubscriptionSchema = z.object({
       id: z.string().uuid(),
@@ -16,13 +21,14 @@ export default class SubscriptionService {
       name: z.string(),
       price: z.number(),
       billing_cycle: z.enum(["monthly", "yearly"]),
-      next_renewal_date: z.date(),
+      due_date: z.date(),
+      installment: z.number().optional(),
       auto_detected: z.boolean(),
     });
 
     const { error, data } = createSubscriptionSchema.safeParse({
       ...subscription,
-      next_renewal_date: new Date(subscription.next_renewal_date),
+      due_date: new Date(subscription.due_date),
       id: randomUUID(),
     });
 
@@ -38,12 +44,14 @@ export default class SubscriptionService {
     });
 
     return {
-      data: "",
+      data: "Assinatura criada com sucesso",
       success: true,
     };
   }
-  
-  async GetByUserId(user_id: string): Promise<ServiceResponse<SubscriptionResponse[]>> {
+
+  async GetByUserId(
+    user_id: string,
+  ): Promise<ServiceResponse<SubscriptionResponse[]>> {
     try {
       const subscriptions = await prisma.subscription.findMany({
         where: {
@@ -60,42 +68,81 @@ export default class SubscriptionService {
     }
   }
 
-  async getById(id: string): Promise<ServiceResponse<SubscriptionResponse | null>> {
+  async getById(
+    id: string,
+  ): Promise<ServiceResponse<SubscriptionResponse | null>> {
     try {
       const subscription = await prisma.subscription.findUnique({
         where: {
-          id
-        }
-      })
+          id,
+        },
+      });
 
       return {
         data: subscription,
         success: true,
-      }
-
-    }catch {
+      };
+    } catch {
       throw new SubscriptionNotFoundError();
     }
+  }
 
-    
+  async getNextDue(user_id: string): Promise<ServiceResponse<GetNextDueResponse[]>> {
+    const today = new Date();
+
+    const pastDays = new Date(today);
+    pastDays.setDate(today.getDate() - 3);
+
+    const futureDays = new Date(today);
+    futureDays.setDate(today.getDate() + 5);
+
+
+
+
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        user_id,
+        due_date: {
+          gte: pastDays,
+          lte: futureDays
+        },
+      },
+      orderBy: {
+        due_date: "asc",
+      },
+    });
+
+    const response = subscriptions.map((subscription) => ({
+      id: subscription.id,
+      name: subscription.name,
+      price: subscription.price,
+      due_date: subscription.due_date
+    }))
+
+    return {
+      data: response,
+      success: true,
+    };
   }
 
   async updateSubscription(
     id: string,
-    subscription: UpdateSubscriptionParams
+    subscription: UpdateSubscriptionParams,
   ): Promise<ServiceResponse<UpdateSubscriptionResponse>> {
-
     const updateSubscriptionSchema = z.object({
       name: z.string().optional(),
       price: z.number().optional(),
       billing_cycle: z.enum(["monthly", "yearly"]).optional(),
-      next_renewal_date: z.date().optional(),
+      due_date: z.date().optional(),
+      installment: z.number().optional(),
       auto_detected: z.boolean().optional(),
     });
 
     const { error, data } = updateSubscriptionSchema.safeParse({
       ...subscription,
-      next_renewal_date: subscription.next_renewal_date ? new Date(subscription.next_renewal_date) : undefined,
+      due_date: subscription.due_date
+        ? new Date(subscription.due_date)
+        : undefined,
       id: id,
     });
 
@@ -113,7 +160,6 @@ export default class SubscriptionService {
       data,
     });
 
-
     return {
       data: response,
       success: true,
@@ -123,9 +169,9 @@ export default class SubscriptionService {
   async deleteSubscription(id: string): Promise<ServiceResponse<string>> {
     const idSchema = z.string().uuid();
 
-    const {error, data} = idSchema.safeParse(id);
+    const { error, data } = idSchema.safeParse(id);
 
-    if(error) {
+    if (error) {
       return {
         error,
         success: false,
@@ -141,7 +187,6 @@ export default class SubscriptionService {
     return {
       data: "",
       success: true,
-    }
-
+    };
   }
 }

@@ -39,6 +39,18 @@ export default class SubscriptionController {
     return reply.status(201).send(response);
   }
 
+  async getNextDue(request: FastifyRequest<{Params: GetByUserParams}>, reply: FastifyReply) {
+    const { user_id} = request.params;
+
+    const response = await subscriptionService.getNextDue(user_id);
+
+    if(!response.success) {
+      return reply.status(400).send({ errors: response.error.issues });
+    }
+
+    return reply.status(201).send(response);
+  }
+
   async getById(request: FastifyRequest<{Params: GetByIdParams}>, reply: FastifyReply) {
     const { id } = request.params;
 

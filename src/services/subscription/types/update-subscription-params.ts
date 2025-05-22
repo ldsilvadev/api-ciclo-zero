@@ -2,6 +2,7 @@ export default interface UpdateSubscriptionParams {
   name?: string;
   price?: number;
   billing_cycle?: "monthly" | "yearly";
-  next_renewal_date?: Date;
+  due_date?: Date;
+  installment?: number;
   auto_detected?: boolean;
 }
