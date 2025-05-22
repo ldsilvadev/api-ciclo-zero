@@ -1,1 +1,1 @@
-export {default} from "./subscription-controller"
+export { default } from "./subscription-controller";

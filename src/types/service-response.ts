@@ -9,7 +9,7 @@ export type ServiceResponse<T> =
     };
 
 export interface Error {
-  issues: Issue[] | any[];
+  issues: Issue[] | unknown[];
 }
 
 interface Issue {

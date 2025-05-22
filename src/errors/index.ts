@@ -1,1 +1,1 @@
-export {default as SubscriptionNotFoundError} from "./subscription-not-found-error"
+export { default as SubscriptionNotFoundError } from "./subscription-not-found-error";

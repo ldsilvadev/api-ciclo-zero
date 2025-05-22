@@ -1,6 +1,11 @@
 import { SubscriptionService } from "@/services";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateSubscription, GetByUserParams, DeleteSubscription, GetByIdParams } from "./types";
+import {
+  CreateSubscription,
+  DeleteSubscription,
+  GetByIdParams,
+  GetByUserParams,
+} from "./types";
 import {
   UpdateSubscriptionParams,
   UpdateSubscriptionResponse,
@@ -11,7 +16,7 @@ const subscriptionService = new SubscriptionService();
 export default class SubscriptionController {
   async createSubscription(
     request: FastifyRequest<{ Body: CreateSubscription }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const subscription = request.body;
 
@@ -26,7 +31,7 @@ export default class SubscriptionController {
 
   async getByUserId(
     request: FastifyRequest<{ Params: GetByUserParams }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const { user_id } = request.params;
 
@@ -39,24 +44,30 @@ export default class SubscriptionController {
     return reply.status(201).send(response);
   }
 
-  async getNextDue(request: FastifyRequest<{Params: GetByUserParams}>, reply: FastifyReply) {
-    const { user_id} = request.params;
+  async getNextDue(
+    request: FastifyRequest<{ Params: GetByUserParams }>,
+    reply: FastifyReply,
+  ) {
+    const { user_id } = request.params;
 
     const response = await subscriptionService.getNextDue(user_id);
 
-    if(!response.success) {
+    if (!response.success) {
       return reply.status(400).send({ errors: response.error.issues });
     }
 
     return reply.status(201).send(response);
   }
 
-  async getById(request: FastifyRequest<{Params: GetByIdParams}>, reply: FastifyReply) {
+  async getById(
+    request: FastifyRequest<{ Params: GetByIdParams }>,
+    reply: FastifyReply,
+  ) {
     const { id } = request.params;
 
     const response = await subscriptionService.getById(id);
 
-    if(!response.success) {
+    if (!response.success) {
       return reply.status(400).send({ errors: response.error.issues });
     }
 
@@ -68,7 +79,7 @@ export default class SubscriptionController {
       Body: UpdateSubscriptionParams;
       Params: Pick<UpdateSubscriptionResponse, "id">;
     }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const { id } = request.params;
 
@@ -76,7 +87,7 @@ export default class SubscriptionController {
 
     const response = await subscriptionService.updateSubscription(
       id,
-      fieldsToUpdate
+      fieldsToUpdate,
     );
 
     if (!response.success) {
@@ -88,7 +99,7 @@ export default class SubscriptionController {
 
   async delete(
     request: FastifyRequest<{ Params: DeleteSubscription }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const { id } = request.params;
 

@@ -3,12 +3,12 @@ import { z } from "zod";
 import { prisma } from "../../configs/prisma";
 import { randomUUID } from "crypto";
 import {
+  CreateSubscription,
   SubscriptionResponse,
   UpdateSubscriptionParams,
   UpdateSubscriptionResponse,
 } from "./types";
 import { SubscriptionNotFoundError } from "@/errors";
-import { CreateSubscription } from "./types";
 import GetNextDueResponse from "./types/get-next-due-response";
 
 export default class SubscriptionService {
@@ -87,7 +87,9 @@ export default class SubscriptionService {
     }
   }
 
-  async getNextDue(user_id: string): Promise<ServiceResponse<GetNextDueResponse[]>> {
+  async getNextDue(
+    user_id: string,
+  ): Promise<ServiceResponse<GetNextDueResponse[]>> {
     const today = new Date();
 
     const pastDays = new Date(today);
@@ -96,15 +98,12 @@ export default class SubscriptionService {
     const futureDays = new Date(today);
     futureDays.setDate(today.getDate() + 5);
 
-
-
-
     const subscriptions = await prisma.subscription.findMany({
       where: {
         user_id,
         due_date: {
           gte: pastDays,
-          lte: futureDays
+          lte: futureDays,
         },
       },
       orderBy: {
@@ -116,8 +115,8 @@ export default class SubscriptionService {
       id: subscription.id,
       name: subscription.name,
       price: subscription.price,
-      due_date: subscription.due_date
-    }))
+      due_date: subscription.due_date,
+    }));
 
     return {
       data: response,
@@ -169,7 +168,7 @@ export default class SubscriptionService {
   async deleteSubscription(id: string): Promise<ServiceResponse<string>> {
     const idSchema = z.string().uuid();
 
-    const { error, data } = idSchema.safeParse(id);
+    const { error } = idSchema.safeParse(id);
 
     if (error) {
       return {

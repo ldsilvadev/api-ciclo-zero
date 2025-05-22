@@ -1,3 +1,3 @@
 export default interface GetByUserParams {
-    user_id: string
+  user_id: string;
 }

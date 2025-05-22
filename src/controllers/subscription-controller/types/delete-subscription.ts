@@ -1,3 +1,3 @@
 export default interface DeleteSubscription {
-    id: string;
+  id: string;
 }

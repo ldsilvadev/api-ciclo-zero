@@ -1,3 +1,3 @@
 export default interface GetByIdParams {
-    id: string
+  id: string;
 }

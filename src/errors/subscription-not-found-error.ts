@@ -1,5 +1,5 @@
 export default class SubscriptionNotFoundError extends Error {
-    constructor() {
-        super("Nenhuma assinatura encontrada");
-    }
+  constructor() {
+    super("Nenhuma assinatura encontrada");
+  }
 }
