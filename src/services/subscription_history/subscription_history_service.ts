@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   CreateSubscriptionHistory,
+  GetTotalResponse,
   SubscriptionHistoryResponse,
 } from "./types";
 import { prisma } from "../../configs/prisma";
@@ -67,6 +68,28 @@ export default class SubscriptionHistoryService {
 
       return {
         data: subscriptions,
+        success: true,
+      };
+    } catch {
+      throw new SubscriptionNotFoundError();
+    }
+  }
+
+  async getTotal(user_id: string): Promise<ServiceResponse<GetTotalResponse>> {
+    try {
+      const result = await prisma.subscriptionsHistory.aggregate({
+        _sum: {
+          price: true,
+        },
+        where: {
+          user_id,
+        },
+      });
+
+      return {
+        data: {
+          total: result._sum.price,
+        },
         success: true,
       };
     } catch {
