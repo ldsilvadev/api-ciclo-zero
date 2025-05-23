@@ -69,6 +69,7 @@ model SubscriptionsHistory {
   user            User         @relation(fields: [user_id], references: [id])
   subscription_id String
   subscription    Subscription @relation(fields: [subscription_id], references: [id])
+  due_date        DateTime
   price           Float
   created_at      DateTime     @default(now())
 

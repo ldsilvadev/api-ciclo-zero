@@ -113,6 +113,7 @@ export default class SubscriptionService {
 
     const response = subscriptions.map((subscription) => ({
       id: subscription.id,
+      user_id: subscription.user_id,
       name: subscription.name,
       price: subscription.price,
       due_date: subscription.due_date,
