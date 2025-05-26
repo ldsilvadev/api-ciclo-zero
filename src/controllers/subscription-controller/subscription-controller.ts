@@ -5,6 +5,7 @@ import {
   DeleteSubscription,
   GetByIdParams,
   GetByUserParams,
+  SubscriptionFilters,
 } from "./types";
 import {
   UpdateSubscriptionParams,
@@ -30,12 +31,18 @@ export default class SubscriptionController {
   }
 
   async getByUserId(
-    request: FastifyRequest<{ Params: GetByUserParams }>,
+    request: FastifyRequest<{
+      Params: GetByUserParams;
+      Querystring: SubscriptionFilters;
+    }>,
     reply: FastifyReply,
   ) {
     const { user_id } = request.params;
+    const { name } = request.query;
 
-    const response = await subscriptionService.GetByUserId(user_id);
+    const filters = { name };
+
+    const response = await subscriptionService.GetByUserId(user_id, filters);
 
     if (!response.success) {
       return reply.status(400).send({ errors: response.error.issues });
