@@ -4,6 +4,7 @@ import { prisma } from "../../configs/prisma";
 import { randomUUID } from "crypto";
 import {
   CreateSubscription,
+  SubscriptionFilters,
   SubscriptionResponse,
   UpdateSubscriptionParams,
   UpdateSubscriptionResponse,
@@ -51,14 +52,22 @@ export default class SubscriptionService {
 
   async GetByUserId(
     user_id: string,
+    filters: SubscriptionFilters = {},
   ): Promise<ServiceResponse<SubscriptionResponse[]>> {
     try {
+      const { name } = filters;
+
       const subscriptions = await prisma.subscription.findMany({
         where: {
           user_id,
+          ...(name && {
+            name: {
+              contains: name,
+              mode: "insensitive",
+            },
+          }),
         },
       });
-
       return {
         data: subscriptions,
         success: true,
