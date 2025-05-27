@@ -1,1 +1,1 @@
-export { default } from "./add-month";
+export { default } from "./add-billing-month";
