@@ -7,14 +7,14 @@ import {
 import { prisma } from "../../configs/prisma";
 import { randomUUID } from "crypto";
 import { ServiceResponse } from "../../types";
-import addMonth from "./utils";
 import { SubscriptionNotFoundError } from "../../errors";
+import addBillingMonth from "./utils";
 
 export default class SubscriptionHistoryService {
   async createSubscriptionHistory(
     subscription: CreateSubscriptionHistory,
   ): Promise<ServiceResponse<string>> {
-    const createSubscriptionHistory = z.object({
+    const createSubscriptionHistorySchema = z.object({
       id: z.string().uuid(),
       user_id: z.string().uuid(),
       subscription_id: z.string().uuid(),
@@ -22,7 +22,7 @@ export default class SubscriptionHistoryService {
       price: z.number(),
     });
 
-    const { error, data } = createSubscriptionHistory.safeParse({
+    const { error, data } = createSubscriptionHistorySchema.safeParse({
       ...subscription,
       due_date: new Date(subscription.due_date),
       id: randomUUID(),
@@ -39,7 +39,7 @@ export default class SubscriptionHistoryService {
       data,
     });
 
-    const newDueDate = addMonth(subscription.due_date);
+    const newDueDate = addBillingMonth(subscription.due_date);
 
     await prisma.subscription.update({
       where: {
