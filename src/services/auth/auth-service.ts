@@ -7,10 +7,10 @@ import { z } from "zod";
 import { errorMessage } from "@/utils";
 import { env } from "@/env";
 import { randomBytes } from "crypto";
-import { addHours } from "date-fns";
 
 import { salt } from "@/configs/salt";
 import { sendEmail } from "./utils";
+import { addHours } from "date-fns";
 
 export default class AuthService {
   async auth(
@@ -19,6 +19,7 @@ export default class AuthService {
     const loginSchema = z.object({
       email: z.string().email(),
       password: z.string(),
+      remember_me: z.boolean().optional(),
     });
 
     const { error, data } = loginSchema.safeParse(userData);
@@ -30,7 +31,7 @@ export default class AuthService {
       };
     }
 
-    const { email, password } = data;
+    const { email, password, remember_me } = data;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -50,8 +51,10 @@ export default class AuthService {
       return errorMessage("Falha na auntenticação");
     }
 
+    const expiresIn = remember_me ? "7d" : "1h";
+
     const token = jwt.sign(payload, env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn,
     });
 
     return {
