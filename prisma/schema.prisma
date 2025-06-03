@@ -13,13 +13,13 @@ datasource db {
 }
 
 enum Plan {
-  free
-  premium
+  FREE
+  PREMIUM
 }
 
 enum BillingCycle {
-  monthly
-  yearly
+  MONTHLY
+  YEARLY
 }
 
 model User {
@@ -27,7 +27,7 @@ model User {
   name                 String
   email                String                 @unique
   password_hash        String
-  plan                 Plan                   @default(free)
+  plan                 Plan                   @default(FREE)
   created_at           DateTime               @default(now())
   subscriptions        Subscription[]
   subscriptionsHistory SubscriptionsHistory[]

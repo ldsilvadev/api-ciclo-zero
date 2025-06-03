@@ -21,7 +21,7 @@ export default class SubscriptionService {
       user_id: z.string().uuid(),
       name: z.string(),
       price: z.number(),
-      billing_cycle: z.enum(["monthly", "yearly"]),
+      billing_cycle: z.enum(["MONTHLY", "YEARLY"]),
       due_date: z.date(),
       installment: z.number().optional(),
       auto_detected: z.boolean(),
@@ -141,7 +141,7 @@ export default class SubscriptionService {
     const updateSubscriptionSchema = z.object({
       name: z.string().optional(),
       price: z.number().optional(),
-      billing_cycle: z.enum(["monthly", "yearly"]).optional(),
+      billing_cycle: z.enum(["MONTHLY", "YEARLY"]).optional(),
       due_date: z.date().optional(),
       installment: z.number().optional(),
       auto_detected: z.boolean().optional(),
