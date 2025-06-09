@@ -9,8 +9,4 @@ export default async function (server: FastifyInstance) {
     subscriptionHistory.createSubscriptionHistory,
   );
   server.get("/subscription_history/:user_id", subscriptionHistory.getByUserId);
-  server.get(
-    "/subscription_history/total/:user_id",
-    subscriptionHistory.getTotal,
-  );
 }

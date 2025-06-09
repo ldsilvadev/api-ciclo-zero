@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   CreateSubscriptionHistory,
-  GetTotalResponse,
   SubscriptionHistoryResponse,
 } from "./types";
 import { prisma } from "../../configs/prisma";
@@ -39,7 +38,10 @@ export default class SubscriptionHistoryService {
       data,
     });
 
-    const newDueDate = addBillingMonth(subscription.due_date);
+    const newDueDate = addBillingMonth(
+      subscription.due_date,
+      subscription.billing_cycle,
+    );
 
     await prisma.subscription.update({
       where: {
@@ -75,25 +77,28 @@ export default class SubscriptionHistoryService {
     }
   }
 
-  async getTotal(user_id: string): Promise<ServiceResponse<GetTotalResponse>> {
-    try {
-      const result = await prisma.subscriptionsHistory.aggregate({
-        _sum: {
-          price: true,
-        },
-        where: {
-          user_id,
-        },
-      });
+  async autoDetectedSubscription(): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      return {
-        data: {
-          total: result._sum.price,
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        auto_detected: true,
+        due_date: {
+          lte: today,
         },
-        success: true,
-      };
-    } catch {
-      throw new SubscriptionNotFoundError();
+      },
+    });
+
+    for (const subscription of subscriptions) {
+      await this.createSubscriptionHistory({
+        user_id: subscription.user_id,
+        subscription_id: subscription.id,
+        billing_cycle: subscription.billing_cycle,
+        due_date: subscription.due_date,
+        price: subscription.price,
+        created_at: new Date(),
+      });
     }
   }
 }

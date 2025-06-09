@@ -21,7 +21,7 @@ export default class DashboardService {
         },
       }),
 
-      prisma.subscriptionsHistory.aggregate({
+      prisma.subscription.aggregate({
         _sum: {
           price: true,
         },

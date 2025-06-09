@@ -35,19 +35,4 @@ export default class SubscriptionHistoryController {
 
     return reply.status(201).send(response);
   }
-
-  async getTotal(
-    request: FastifyRequest<{ Params: { user_id: string } }>,
-    reply: FastifyReply,
-  ) {
-    const { user_id } = request.params;
-
-    const response = await subscriptionHistoryService.getTotal(user_id);
-
-    if (!response.success) {
-      return reply.status(400).send({ errors: response.error.issues });
-    }
-
-    return reply.status(201).send(response);
-  }
 }
