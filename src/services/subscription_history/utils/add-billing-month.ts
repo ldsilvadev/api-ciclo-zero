@@ -8,7 +8,15 @@ function getNextBusinessDay(date: Date): Date {
   return nextDate;
 }
 
-export default function addBillingMonth(date: Date): Date {
-  const oneMonthLater = addMonths(date, 1);
-  return getNextBusinessDay(oneMonthLater);
+export default function addBillingMonth(
+  date: Date,
+  billing_cycle: string,
+): Date {
+  if (billing_cycle === "YEARLY") {
+    const oneYearLater = addMonths(date, 12);
+    return getNextBusinessDay(oneYearLater);
+  } else {
+    const oneMonthLater = addMonths(date, 1);
+    return getNextBusinessDay(oneMonthLater);
+  }
 }

@@ -1,1 +1,1 @@
-export { default } from "./subscription_history_service";
+export { default } from "./subscription-history-service";
